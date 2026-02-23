@@ -46,6 +46,16 @@ const negotiateWfsFormat = async (
   const [baseUrl, existingQuery] = originalUrl.split('?')
   const params = new URLSearchParams(existingQuery || '')
 
+  let extractedLayerName = ''
+  for (const [key, value] of params.entries()) {
+    if (key.toLowerCase() === 'typename' || key.toLowerCase() === 'typenames') {
+      extractedLayerName = value
+      break
+    }
+  }
+
+  const finalLayerName = extractedLayerName || layerName || resourceId
+
   const keysToDelete: string[] = []
   for (const key of params.keys()) {
     const lowerKey = key.toLowerCase()
@@ -58,7 +68,7 @@ const negotiateWfsFormat = async (
   params.set('SERVICE', 'WFS')
   params.set('VERSION', '2.0.0')
   params.set('REQUEST', 'GetFeature')
-  params.set('TYPENAMES', layerName || resourceId)
+  params.set('TYPENAMES', finalLayerName)
 
   const formatsToTry = [
     { param: 'application/json; subtype=geojson', format: 'geojson' },
@@ -94,8 +104,9 @@ const detectFormatFromHeaders = async (url: string): Promise<string | null> => {
       timeout: 5000,
       validateStatus: (status) => status < 400
     })
-    const contentType = response.headers['content-type']
-    if (!contentType) return null
+    const contentTypeHeader = response.headers['content-type']
+    if (!contentTypeHeader) return null
+    const contentType = String(contentTypeHeader).toLowerCase()
 
     if (contentType.includes('application/json') || contentType.includes('application/geo+json')) {
       return 'geojson'
