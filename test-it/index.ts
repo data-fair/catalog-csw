@@ -17,9 +17,13 @@ const catalogConfig = {
 const secrets = { secretField: 'Hey' }
 const tmpDir = './data/test/downloads'
 
+const testUrl = 'https://geosas.fr/geoserver/wfs?service=WFS&version=2.0.0&request=GetFeature&typeName=ore:site_exp&outputFormat=SHAPE-ZIP'
+
+const urlBase64 = Buffer.from(testUrl).toString('base64')
+
 const getResourceParams = {
   catalogConfig,
-  resourceId: '5514e0c5-4406-4880-9cff-4df6f39c0f4f',
+  resourceId: `5514e0c5-4406-4880-9cff-4df6f39c0f4f|zip|${urlBase64}`,
   update: { metadata: true, schema: true },
   secrets,
   importConfig: { nbRows: 10 },
