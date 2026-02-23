@@ -127,8 +127,10 @@ export const list = async (config: ListContext<CSWConfig, typeof capabilities>):
     const resources: ResourceList = validLinks.map(link => {
       const urlBase64 = Buffer.from(link.url).toString('base64')
       const displayFormat = link.format.toUpperCase()
-      const titleExtra = link.name ? ` - ${link.name}` : ''
-
+      let titleExtra = ''
+      if (displayFormat === 'ZIP') {
+        titleExtra = link.name ? ` - ${link.name}` : ''
+      }
       return {
         id: `${actualId}|${link.format}|${urlBase64}`,
         title: `${displayFormat}${titleExtra}`,
