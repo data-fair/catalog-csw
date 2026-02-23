@@ -2,7 +2,13 @@ import axios from '@data-fair/lib-node/axios.js'
 import { getText, asArray } from './common.ts'
 import type { DownloadCandidate } from './types.ts'
 
-export const isUrlValid = async (url: string, isWFSTest = false): Promise<boolean> => {
+/**
+ * Checks if a URL is valid and reachable. For WFS services, it performs a lightweight GetFeature request to verify both reachability and that the service responds correctly to WFS queries.
+ * @param url The URL to validate.
+ * @param isWFSTest A boolean indicating whether to perform a WFS-specific test (true) or a simple HEAD request (false).
+ * @returns A promise that resolves to true if the URL is valid and reachable, false otherwise.
+ */
+const isUrlValid = async (url: string, isWFSTest = false): Promise<boolean> => {
   try {
     if (isWFSTest) {
       const testUrl = new URL(url)
@@ -200,6 +206,12 @@ const analyzeLink = (linkWrapper: any): DownloadCandidate | null => {
   return { ...base, format: 'unknown', score: 1 }
 }
 
+/**
+ * Finds and validates download URLs from the provided metadata. It analyzes the distributionInfo section of the metadata to extract potential download links, scores them based on their format and protocol, and then validates the top candidates. For WFS services, it performs a negotiation to find a valid download URL with an appropriate format.
+ * @param metadata The metadata object from which to extract download URLs.
+ * @param resourceId The identifier of the resource, used for WFS layer name extraction if needed.
+ * @returns A promise that resolves to an array of valid download URLs along with their formats and optional names.
+ */
 export const findDownloadUrls = async (metadata: any, resourceId: string): Promise<{ url: string, format: string, name?: string }[]> => {
   const root = metadata.MD_Metadata || metadata
   const distributionInfo = root?.distributionInfo?.MD_Distribution
@@ -232,7 +244,7 @@ export const findDownloadUrls = async (metadata: any, resourceId: string): Promi
 
   for (const candidate of candidates) {
     let { url, format, name } = candidate
-    if (validDownloads.some(v => v.url === url)) {
+    if (validDownloads.some(v => v.url === url || (v.format === format && format !== 'zip' && format !== 'unknown'))) {
       continue
     }
 
@@ -241,7 +253,7 @@ export const findDownloadUrls = async (metadata: any, resourceId: string): Promi
       if (wfsResult) {
         url = wfsResult.url
         format = wfsResult.format
-        if (!validDownloads.some(v => v.url === url)) {
+        if (!validDownloads.some(v => v.url === url || (v.format === format && format !== 'zip' && format !== 'unknown'))) {
           validDownloads.push({ url, format, name })
         }
       }
@@ -267,7 +279,7 @@ export const findDownloadUrls = async (metadata: any, resourceId: string): Promi
           }
         }
 
-        if (!validDownloads.some(v => v.url === url)) {
+        if (!validDownloads.some(v => v.url === url || (v.format === format && format !== 'zip'))) {
           validDownloads.push({ url, format, name })
         }
       }

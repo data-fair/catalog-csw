@@ -68,7 +68,7 @@ export const getResource = async ({ resourceId, tmpDir, log, catalogConfig }: Ge
 
   return {
     id: resourceId,
-    title: `${datasetTitle} (${formatUrl})`,
+    title: `${datasetTitle}`,
     description: descriptionDataset,
     filePath: destPath,
     format: formatUrl,
