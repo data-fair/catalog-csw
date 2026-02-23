@@ -59,7 +59,7 @@ export async function downloadFileWithProgress (
       // Success: The file has been fully written
       writer.on('finish', async () => {
         // Ensure the progress bar shows 100% (or the final byte count) at the end
-        await log.progress(`download ${label}`, downloadedBytes, totalLength)
+        await log.progress(`download ${label}`, downloadedBytes, downloadedBytes)
         resolve(destPath)
       })
 
