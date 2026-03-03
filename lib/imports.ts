@@ -73,6 +73,7 @@ export const getResource = async ({ resourceId, tmpDir, log, catalogConfig }: Ge
     filePath: destPath,
     format: formatUrl,
     updatedAt: new Date().toISOString(),
+    origin: url,
     size: 0
   } as Resource
 }

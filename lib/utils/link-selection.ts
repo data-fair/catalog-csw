@@ -60,8 +60,35 @@ const negotiateWfsFormat = async (
     }
   }
 
-  const finalLayerName = extractedLayerName || layerName || resourceId
+  let finalLayerName = extractedLayerName || layerName || resourceId
+  if (!extractedLayerName) {
+    try {
+      const capUrl = new URL(baseUrl)
+      capUrl.searchParams.set('SERVICE', 'WFS')
+      capUrl.searchParams.set('REQUEST', 'GetCapabilities')
+      capUrl.searchParams.set('VERSION', '1.1.0')
 
+      const response = await axios.get(capUrl.toString(), {
+        timeout: 5000,
+        validateStatus: (status) => status < 400
+      })
+
+      const match = String(response.data).match(/<(?:[a-zA-Z0-9_]+:)?FeatureType[^>]*>.*?<(?:[a-zA-Z0-9_]+:)?Name>([^<]+)<\/(?:[a-zA-Z0-9_]+:)?Name>/is)
+      if (match && match[1]) {
+        let discoveredName = match[1]
+        const pathParts = capUrl.pathname.split('/')
+        const wfsIndex = pathParts.indexOf('wfs')
+        if (wfsIndex > 0) {
+          const workspace = pathParts[wfsIndex - 1]
+          if (discoveredName.startsWith(`${workspace}:`)) {
+            discoveredName = discoveredName.split(':')[1]
+          }
+        }
+        finalLayerName = discoveredName
+      }
+    } catch (err) {
+    }
+  }
   const keysToDelete: string[] = []
   for (const key of params.keys()) {
     const lowerKey = key.toLowerCase()
