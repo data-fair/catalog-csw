@@ -121,7 +121,16 @@ export const list = async (config: ListContext<CSWConfig, typeof capabilities>):
     const parsed = parser.parse(response.data)
     const root = parsed.GetRecordByIdResponse || parsed['csw:GetRecordByIdResponse']
     const metadata = root?.MD_Metadata || root?.['gmd:MD_Metadata']
-
+    let datasetTitle = 'Jeu de données'
+    try {
+      const idInfo = asArray(metadata?.identificationInfo || metadata?.['gmd:identificationInfo'] || [])[0]
+      const dataId = idInfo?.MD_DataIdentification || idInfo?.['gmd:MD_DataIdentification'] || idInfo?.SV_ServiceIdentification || idInfo?.['srv:SV_ServiceIdentification']
+      const citation = dataId?.citation || dataId?.['gmd:citation']
+      const ciCitation = citation?.CI_Citation || citation?.['gmd:CI_Citation']
+      const titleNode = ciCitation?.title || ciCitation?.['gmd:title']
+      datasetTitle = getText(titleNode?.CharacterString || titleNode?.['gco:CharacterString'] || titleNode) || datasetTitle
+    } catch (e) {
+    }
     const validLinks = await findDownloadUrls(metadata, actualId)
 
     const resources: ResourceList = validLinks.map(link => {
@@ -145,7 +154,7 @@ export const list = async (config: ListContext<CSWConfig, typeof capabilities>):
       count: resources.length,
       results: paginatedResources,
       path: [
-        { id: currentFolderId, title: 'FORMATS DISPONIBLES', type: 'folder' }
+        { id: currentFolderId, title: `FORMATS DISPONIBLES - ${datasetTitle}`, type: 'folder' }
       ]
     }
   } catch (error: any) {
