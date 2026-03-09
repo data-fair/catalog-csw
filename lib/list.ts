@@ -35,9 +35,9 @@ export const list = async (config: ListContext<CSWConfig, typeof capabilities>):
       ? `
         <ogc:And>
           ${typeFilter}
-          <ogc:PropertyIsLike wildCard="%" singleChar="_" escapeChar="\\\\">
+          <ogc:PropertyIsLike wildCard="*" singleChar="_" escapeChar="\\\\" matchCase="false">
             <ogc:PropertyName>AnyText</ogc:PropertyName>
-            <ogc:Literal>%${query}%</ogc:Literal>
+            <ogc:Literal>*${query}*</ogc:Literal>
           </ogc:PropertyIsLike>
         </ogc:And>`
       : typeFilter
@@ -52,7 +52,8 @@ export const list = async (config: ListContext<CSWConfig, typeof capabilities>):
     const cswBody = `
       <csw:GetRecords 
         xmlns:csw="http://www.opengis.net/cat/csw/2.0.2" 
-        xmlns:ogc="http://www.opengis.net/ogc" 
+        xmlns:ogc="http://www.opengis.net/ogc"
+        xmlns:dc="http://purl.org/dc/elements/1.1/"
         service="CSW" 
         version="2.0.2" 
         resultType="results" 
