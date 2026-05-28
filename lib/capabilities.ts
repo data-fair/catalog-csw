@@ -7,7 +7,6 @@ import type { Capability } from '@data-fair/types-catalogs'
  */
 export const capabilities = [
   'search',
-  'thumbnail',
   'pagination',
 
   'import',

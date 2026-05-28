@@ -28,7 +28,7 @@ const isUrlValid = async (url: string, isWFSTest = false): Promise<boolean> => {
         return false
       }
       // if the requested format is JSON but the response is XML, it's likely that the WFS doesn't support the requested format
-      const contentType = response.headers['content-type'] || ''
+      const contentType = (response.headers['content-type'] as string | undefined) || ''
       const requestedFormat = testUrl.searchParams.get('OUTPUTFORMAT') || ''
       if (requestedFormat.includes('json') && contentType.includes('xml')) {
         return false
