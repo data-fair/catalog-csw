@@ -16,13 +16,13 @@ const parser = new XMLParser({
 export const getResource = async ({ resourceId, tmpDir, log, catalogConfig }: GetResourceContext<CSWConfig>): ReturnType<CatalogPlugin['getResource']> => {
   const parts = resourceId.split('|')
   if (parts.length !== 3) {
-    throw new Error('Identifiant de ressource invalide.')
+    throw new Error('Invalid resource identifier.')
   }
 
   const [actualId, formatUrl, urlBase64] = parts
   const url = Buffer.from(urlBase64, 'base64').toString('utf-8')
 
-  await log.step('Récupération des métadonnées (description et titre)')
+  await log.step('Retrieving metadata (description and title)')
   const cswBody = `
     <csw:GetRecordById 
       xmlns:csw="http://www.opengis.net/cat/csw/2.0.2" 
@@ -49,7 +49,7 @@ export const getResource = async ({ resourceId, tmpDir, log, catalogConfig }: Ge
     const abstractObj = dataId?.abstract
     descriptionDataset = getText(abstractObj) || ''
   } catch (error) {
-    await log.warning(`Impossible de récupérer les métadonnées pour ${actualId}`)
+    await log.warning(`Unable to retrieve metadata for ${actualId}`)
   }
 
   await log.step('Downloading file')

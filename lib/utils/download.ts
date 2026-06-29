@@ -79,34 +79,34 @@ export async function downloadFileWithProgress (
     if (err.response) {
       const status = err.response.status
       if (status >= 400 && status < 500) {
-        let msg = `Erreur client (${status})`
+        let msg = `Client error (${status})`
         switch (status) {
           case 400:
-            msg = 'Requête invalide (400). Les paramètres envoyés sont peut-être incorrects.'
+            msg = 'Invalid request (400). The parameters sent may be incorrect.'
             break
           case 401:
-            msg = 'Accès refusé (401). Vérifiez le nom d\'utilisateur et le mot de passe dans la configuration.'
+            msg = 'Access denied (401). Check the username and password in the configuration.'
             break
           case 403:
-            msg = 'Accès interdit (403). Vous n\'avez pas les droits nécessaires pour accéder à ce fichier.'
+            msg = 'Access forbidden (403). You do not have the necessary rights to access this file.'
             break
           case 404:
-            msg = 'Fichier introuvable (404). L\'URL de téléchargement n\'existe plus ou est incorrecte.'
+            msg = 'File not found (404). The download URL no longer exists or is incorrect.'
             break
           case 408:
-            msg = 'Délai d\'attente dépassé (408). Le serveur a mis trop de temps à répondre.'
+            msg = 'Request timeout (408). The server took too long to respond.'
             break
           case 410:
-            msg = 'Ressource indisponible (410). Le fichier a été définitivement supprimé.'
+            msg = 'Resource unavailable (410). The file has been permanently deleted.'
             break
           case 421:
-            msg = 'Requête mal dirigée (421). Le serveur ne peut pas répondre (problème de certificat SSL).'
+            msg = 'Misdirected request (421). The server cannot respond (SSL certificate issue).'
             break
           case 429:
-            msg = 'Trop de requêtes (429). Le serveur limite le nombre de téléchargements (rate limit).'
+            msg = 'Too many requests (429). The server limits the number of downloads (rate limit).'
             break
           default:
-            msg = `Erreur client non gérée (${status}).`
+            msg = `Unhandled client error (${status}).`
         }
         await log.error(msg)
         throw new Error(msg)

@@ -97,7 +97,7 @@ export const list = async (config: ListContext<CSWConfig, typeof capabilities>):
 
       return { count: totalCount, results: listResults, path: [] }
     } catch (error: any) {
-      console.error('Erreur lors de la récupération des jeux de données:', error.message)
+      console.error('Error retrieving datasets:', error.message)
       return { count: 0, results: [], path: [] }
     }
   }
@@ -159,7 +159,7 @@ export const list = async (config: ListContext<CSWConfig, typeof capabilities>):
       ]
     }
   } catch (error: any) {
-    console.error('Erreur lors de la vérification des liens:', error.message)
+    console.error('Error checking links:', error.message)
     return { count: 0, results: [], path: [] }
   }
 }

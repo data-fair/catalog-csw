@@ -6,17 +6,17 @@ import type { PrepareContext } from '@data-fair/types-catalogs'
 
 export default async ({ catalogConfig }: PrepareContext<CSWConfig, CSWCapabilities>) => {
   if (!catalogConfig || !catalogConfig.url) {
-    throw new Error("L'URL du catalogue est obligatoire.")
+    throw new Error('The catalog URL is required.')
   }
   const urlString = catalogConfig.url.trim()
   let url: URL
   try {
     url = new URL(urlString)
   } catch (err) {
-    throw new Error("L'URL fournie n'est pas valide.")
+    throw new Error('The provided URL is not valid.')
   }
   if (!['http:', 'https:'].includes(url.protocol)) {
-    throw new Error('Seuls les protocoles HTTP et HTTPS sont autorisés.')
+    throw new Error('Only HTTP and HTTPS protocols are allowed.')
   }
   try {
     const { address } = await dns.lookup(url.hostname, { family: 4 })
@@ -29,11 +29,11 @@ export default async ({ catalogConfig }: PrepareContext<CSWConfig, CSWCapabiliti
       /^172\.(1[6-9]|2\d|3[0-1])\./.test(address)
 
     if (isPrivateIp) {
-      throw new Error(`L'URL est interdite car elle pointe vers un réseau interne (${address}).`)
+      throw new Error(`The URL is forbidden because it points to an internal network (${address}).`)
     }
   } catch (err: any) {
-    if (err.message && err.message.includes('interdite')) throw err
-    throw new Error(`Impossible de résoudre l'adresse : ${url.hostname}`)
+    if (err.message && err.message.includes('forbidden')) throw err
+    throw new Error(`Unable to resolve the address: ${url.hostname}`)
   }
   catalogConfig.url = url.toString()
   return {
