@@ -27,7 +27,7 @@
   "keywords": [
     "data-fair-catalogs-plugin"
   ],
-  "license": "MIT",
+  "license": "AGPL-3.0-only",
   "dependencies": {
     "@data-fair/lib-validation": "^1.0.2",
     "@data-fair/lib-node": "^2.11.0",
