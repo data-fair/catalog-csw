@@ -29,9 +29,9 @@
   ],
   "license": "AGPL-3.0-only",
   "dependencies": {
-    "@data-fair/lib-validation": "^1.0.2",
-    "@data-fair/lib-node": "^2.11.0",
+    "@data-fair/lib-node": "^2.15.0",
     "@data-fair/lib-utils": "^1.6.0",
+    "@data-fair/lib-validation": "^1.0.2",
     "fast-xml-parser": "^5.3.5",
     "prom-client": "^15.1.3"
   },

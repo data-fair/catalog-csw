@@ -61,7 +61,8 @@ export const getResource = async ({ resourceId, tmpDir, log, catalogConfig }: Ge
     .replace(/^_|_$/g, '')
     .toLowerCase()
 
-  const fileName = `${datasetTitleSafe}.${formatUrl}`
+  // the format comes from the resource id, never let it contain path separators
+  const fileName = `${datasetTitleSafe}.${formatUrl.replace(/[^a-zA-Z0-9_]/g, '_')}`
   const destPath = path.join(tmpDir, fileName)
 
   await downloadFileWithProgress(url, destPath, datasetTitleSafe, log)
